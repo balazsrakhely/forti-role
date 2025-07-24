@@ -9,7 +9,7 @@
   ansible.builtin.assert:
     that:
       - local_subnets is defined
-      - local_subnets is list
+      - local_subnets is not string and local_subnets is not mapping and local_subnets is iterable
       - local_subnets | length > 0
     fail_msg: "local_subnets must be a non-empty list"
 
@@ -17,6 +17,6 @@
   ansible.builtin.assert:
     that:
       - remote_subnets is defined
-      - remote_subnets is list
+      - remote_subnets is not string and remote_subnets is not mapping and remote_subnets is iterable
       - remote_subnets | length > 0
     fail_msg: "remote_subnets must be a non-empty list"
