@@ -1,0 +1,19 @@
+---
+- name: Validate ipsec tunnel policy name
+  ansible.builtin.assert:
+    that:
+      - tunnel_name is defined
+      - tunnel_name is not None
+      - tunnel_name != ''
+    fail_msg: "A unique name is required for the ruleset"
+
+- name: Validate presence of local and remote subnets
+  ansible.builtin.assert:
+    that:
+      - local_subnets is defined
+      - local_subnets is not None
+      - local_subnets | length > 0
+      - remote_subnets is defined
+      - remote_subnets is not None
+      - remote_subnets | length > 0
+    fail_msg: "Local and remote subnets are mandatory"

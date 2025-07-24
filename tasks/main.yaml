@@ -1,0 +1,28 @@
+---
+- name: Validations
+  ansible.builtin.include_tasks:
+    file: validation.yaml
+
+- name: Create local firewall address
+  fortinet.fortimanager.fmgr_firewall_address:
+    adom: "root"
+    state: "present"
+    firewall_address:
+      name: "{{ tunnel_name }}_local_{{ local_subnets_index }}"
+      subnet: "{{ local_subnets_item }}"
+  loop: "{{ local_subnets }}"
+  loop_control:
+    loop_var: local_subnets_item
+    index_var: local_subnets_index
+
+- name: Create remote firewall address
+  fortinet.fortimanager.fmgr_firewall_address:
+    adom: "root"
+    state: "present"
+    firewall_address:
+      name: "{{ tunnel_name }}_remote_{{ remote_subnets_index }}"
+      subnet: "{{ remote_subnets_item }}"
+  loop: "{{ remote_subnets }}"
+  loop_control:
+    loop_var: remote_subnets_item
+    index_var: remote_subnets_index
