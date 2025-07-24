@@ -14,6 +14,7 @@
   loop_control:
     loop_var: local_subnets_item
     index_var: local_subnets_index
+  delegate_to: fortimanager
 
 - name: Create remote firewall address
   fortinet.fortimanager.fmgr_firewall_address:
@@ -26,3 +27,4 @@
   loop_control:
     loop_var: remote_subnets_item
     index_var: remote_subnets_index
+  delegate_to: fortimanager
