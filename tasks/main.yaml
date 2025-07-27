@@ -3,14 +3,6 @@
   ansible.builtin.include_tasks:
     file: validation.yaml
 
-- name: Login to FortiManager
-  fortinet.fortimanager.fmgr_sys_login_user:
-    workspace_locking_adom: "{{ adom }}"
-    sys_login_user:
-      user: "{{ fortimanager_user }}"
-      passwd: "{{ fortimanager_password }}"
-  delegate_to: fortimanager
-
 - name: Create local firewall address
   fortinet.fortimanager.fmgr_firewall_address:
     adom: "{{ adom }}"
@@ -39,9 +31,4 @@
   loop_control:
     loop_var: remote_subnets_item
     index_var: remote_subnets_index
-  delegate_to: fortimanager
-
-- name: Logout from FortiManager
-  fortinet.fortimanager.fmgr_sys_logout:
-    workspace_locking_adom: "{{ adom }}"
   delegate_to: fortimanager
