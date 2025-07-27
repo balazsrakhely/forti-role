@@ -11,7 +11,7 @@
     firewall_address:
       name: "{{ tunnel_name }}_local_{{ local_subnets_index }}"
       subnet: "{{ local_subnets_item }}"
-    comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
+      comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
   loop: "{{ local_subnets }}"
   loop_control:
     loop_var: local_subnets_item
@@ -26,7 +26,7 @@
     firewall_address:
       name: "{{ tunnel_name }}_remote_{{ remote_subnets_index }}"
       subnet: "{{ remote_subnets_item }}"
-    comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
+      comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
   loop: "{{ remote_subnets }}"
   loop_control:
     loop_var: remote_subnets_item
