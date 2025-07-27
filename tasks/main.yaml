@@ -3,6 +3,13 @@
   ansible.builtin.include_tasks:
     file: validation.yaml
 
+- name: Login to FortiManager
+  fortinet.fortimanager.fmgr_sys_login_user:
+    workspace_locking_adom: "{{ adom }}"
+    sys_login_user:
+      user: "{{ fortimanager_user }}"
+      passwd: "{{ fortimanager_password }}"
+
 - name: Create local firewall address
   fortinet.fortimanager.fmgr_firewall_address:
     adom: "{{ adom }}"
