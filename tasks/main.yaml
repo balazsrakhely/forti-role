@@ -47,6 +47,7 @@
           selector: "firewall_address"
           params:
             adom: "{{ adom }}"
+            address: ""
       delegate_to: fortimanager
 
   always:
