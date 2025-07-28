@@ -41,6 +41,13 @@
         index_var: remote_subnets_index
       delegate_to: fortimanager
 
+    - name: Retrieve all the IPv4 addresses
+      fortinet.fortimanager.fmgr_fact:
+        facts:
+          selector: "firewall_address"
+          params:
+            adom: "{{ adom }}"
+
   always:
     - name: Unlocking adom
       fortinet.fortimanager.fmgr_pm_config_workspace_unlock:
