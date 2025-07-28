@@ -32,7 +32,7 @@
     - name: Set up local firewall address name list for address group
       ansible.builtin.set_fact:
         _local_firewall_address_list: "{{ _local_firewall_address_list + [item.meta.response_data.name]}}"
-      loop: "{{ _local_firewall_address_result }}"
+      loop: "{{ _local_firewall_address_result.results }}"
       loop_control:
         loop_var: item
       when: item.meta.response_code == 0
@@ -69,7 +69,7 @@
     - name: Set up remote firewall address name list for address group
       ansible.builtin.set_fact:
         _remote_firewall_address_list: "{{ _remote_firewall_address_list + [item.meta.response_data.name]}}"
-      loop: "{{ _remote_firewall_address_result }}"
+      loop: "{{ _remote_firewall_address_result.results }}"
       loop_control:
         loop_var: item
       when: item.meta.response_code == 0
