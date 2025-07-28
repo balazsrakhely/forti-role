@@ -3,6 +3,11 @@
   ansible.builtin.include_tasks:
     file: validation.yaml
 
+- name: Locking adom
+  fortinet.fortimanager.fmgr_dvmdb_workspace_lock:
+    workspace_locking_adom: "{{ adom }}"
+    adom: "{{ adom }}"
+
 - name: Create local firewall address
   fortinet.fortimanager.fmgr_firewall_address:
     adom: "{{ adom }}"
