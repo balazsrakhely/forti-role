@@ -11,35 +11,35 @@
         adom: "{{ adom }}"
       delegate_to: fortimanager
 
-    - name: Create local firewall address
-      fortinet.fortimanager.fmgr_firewall_address:
-        adom: "{{ adom }}"
-        workspace_locking_adom: "{{ adom }}" 
-        state: "present"
-        firewall_address:
-          name: "{{ tunnel_name }}_local_{{ local_subnets_index }}"
-          subnet: "{{ local_subnets_item }}"
-          comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
-      loop: "{{ local_subnets }}"
-      loop_control:
-        loop_var: local_subnets_item
-        index_var: local_subnets_index
-      delegate_to: fortimanager
+    # - name: Create local firewall address
+    #   fortinet.fortimanager.fmgr_firewall_address:
+    #     adom: "{{ adom }}"
+    #     workspace_locking_adom: "{{ adom }}" 
+    #     state: "present"
+    #     firewall_address:
+    #       name: "{{ tunnel_name }}_local_{{ local_subnets_index }}"
+    #       subnet: "{{ local_subnets_item }}"
+    #       comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
+    #   loop: "{{ local_subnets }}"
+    #   loop_control:
+    #     loop_var: local_subnets_item
+    #     index_var: local_subnets_index
+    #   delegate_to: fortimanager
 
-    - name: Create remote firewall address
-      fortinet.fortimanager.fmgr_firewall_address:
-        adom: "{{ adom }}"
-        workspace_locking_adom: "{{ adom }}"
-        state: "present"
-        firewall_address:
-          name: "{{ tunnel_name }}_remote_{{ remote_subnets_index }}"
-          subnet: "{{ remote_subnets_item }}"
-          comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
-      loop: "{{ remote_subnets }}"
-      loop_control:
-        loop_var: remote_subnets_item
-        index_var: remote_subnets_index
-      delegate_to: fortimanager
+    # - name: Create remote firewall address
+    #   fortinet.fortimanager.fmgr_firewall_address:
+    #     adom: "{{ adom }}"
+    #     workspace_locking_adom: "{{ adom }}"
+    #     state: "present"
+    #     firewall_address:
+    #       name: "{{ tunnel_name }}_remote_{{ remote_subnets_index }}"
+    #       subnet: "{{ remote_subnets_item }}"
+    #       comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
+    #   loop: "{{ remote_subnets }}"
+    #   loop_control:
+    #     loop_var: remote_subnets_item
+    #     index_var: remote_subnets_index
+    #   delegate_to: fortimanager
 
     - name: Retrieve all the IPv4 addresses
       fortinet.fortimanager.fmgr_fact:
