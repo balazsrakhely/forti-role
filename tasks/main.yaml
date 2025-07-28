@@ -47,6 +47,7 @@
           selector: "firewall_address"
           params:
             adom: "{{ adom }}"
+      delegate_to: fortimanager
 
   always:
     - name: Unlocking adom
