@@ -48,7 +48,10 @@
           params:
             adom: "{{ adom }}"
             address: ""
+      register: _firewall_objects_debug
       delegate_to: fortimanager
+
+    - debug: var=_firewall_objects_debug
 
   always:
     - name: Unlocking adom
