@@ -42,11 +42,11 @@
 
     - debug: var=_remote_firewall_address_result
 
-    - name: Create address group for local addresses
-      fortinet.fortimanager.fmgr_firewall_addrgrp:
-        adom: "{{ adom }}"
-        workspace_locking_adom: "{{ adom }}"
-        state: present
+    # - name: Create address group for local addresses
+    #   fortinet.fortimanager.fmgr_firewall_addrgrp:
+    #     adom: "{{ adom }}"
+    #     workspace_locking_adom: "{{ adom }}"
+    #     state: present
 
     - name: Commiting changes
       fortinet.fortimanager.fmgr_pm_config_workspace_commit:
