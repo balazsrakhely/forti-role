@@ -3,6 +3,10 @@
   ansible.builtin.include_tasks:
     file: validation.yaml
 
+- name: Construct comment
+  ansible.builtin.set_fact:
+    _comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
+
 - name: Policy and Objects
   ansible.builtin.include_tasks:
     file: policy_and_objects.yaml

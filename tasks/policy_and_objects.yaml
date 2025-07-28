@@ -6,6 +6,11 @@
         adom: "{{ adom }}"
       delegate_to: fortimanager
 
+    - name: Initialize local and remote firewall address name list for address group
+      ansible.builtin.set_fact:
+        _local_firewall_address_list: []
+        _remote_firewall_address_list: []
+
     - name: Create local firewall address
       fortinet.fortimanager.fmgr_firewall_address:
         adom: "{{ adom }}"
@@ -14,7 +19,7 @@
         firewall_address:
           name: "{{ tunnel_name }}_local_{{ local_subnets_index }}"
           subnet: "{{ local_subnets_item }}"
-          comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
+          comment: _comment
       loop: "{{ local_subnets }}"
       loop_control:
         loop_var: local_subnets_item
@@ -24,6 +29,25 @@
 
     - debug: var=_local_firewall_address_result
 
+    - name: Set up local firewall address name list for address group
+      ansible.builtin.set_fact:
+        _local_firewall_address_list: "{{ _local_firewall_address_list + [item.meta.response_data.name]}}"
+      loop: "{{ _local_firewall_address_result }}"
+      loop_control:
+        loop_var: item
+      when: item.meta.response_code == 0
+
+    - name: Create address group for local addresses
+      fortinet.fortimanager.fmgr_firewall_addrgrp:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}"
+        state: present
+        firewall_addrgrp:
+          name: "{{ tunnel_name }}_local"
+          member: "{{ _local_firewall_address_list }}"
+          comment: _comment
+      delegate_to: fortimanager
+
     - name: Create remote firewall address
       fortinet.fortimanager.fmgr_firewall_address:
         adom: "{{ adom }}"
@@ -32,7 +56,7 @@
         firewall_address:
           name: "{{ tunnel_name }}_remote_{{ remote_subnets_index }}"
           subnet: "{{ remote_subnets_item }}"
-          comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
+          comment: _comment
       loop: "{{ remote_subnets }}"
       loop_control:
         loop_var: remote_subnets_item
@@ -42,11 +66,24 @@
 
     - debug: var=_remote_firewall_address_result
 
-    # - name: Create address group for local addresses
-    #   fortinet.fortimanager.fmgr_firewall_addrgrp:
-    #     adom: "{{ adom }}"
-    #     workspace_locking_adom: "{{ adom }}"
-    #     state: present
+    - name: Set up remote firewall address name list for address group
+      ansible.builtin.set_fact:
+        _remote_firewall_address_list: "{{ _remote_firewall_address_list + [item.meta.response_data.name]}}"
+      loop: "{{ _remote_firewall_address_result }}"
+      loop_control:
+        loop_var: item
+      when: item.meta.response_code == 0
+
+    - name: Create address group for remote addresses
+      fortinet.fortimanager.fmgr_firewall_addrgrp:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}"
+        state: present
+        firewall_addrgrp:
+          name: "{{ tunnel_name }}_remote"
+          member: "{{ _remote_firewall_address_list }}"
+          comment: _comment
+      delegate_to: fortimanager
 
     - name: Commiting changes
       fortinet.fortimanager.fmgr_pm_config_workspace_commit:
