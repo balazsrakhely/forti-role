@@ -19,7 +19,7 @@
         firewall_address:
           name: "{{ tunnel_name }}_local_{{ local_subnets_index }}"
           subnet: "{{ local_subnets_item }}"
-          comment: _comment
+          comment: "{{ _comment }}"
       loop: "{{ local_subnets }}"
       loop_control:
         loop_var: local_subnets_item
@@ -45,8 +45,11 @@
         firewall_addrgrp:
           name: "{{ tunnel_name }}_local"
           member: "{{ _local_firewall_address_list }}"
-          comment: _comment
+          comment: "{{ _comment }}"
+      register: _local_firewall_address_group_result
       delegate_to: fortimanager
+
+    - debug: var=_local_firewall_address_group_result
 
     - name: Create remote firewall address
       fortinet.fortimanager.fmgr_firewall_address:
@@ -56,7 +59,7 @@
         firewall_address:
           name: "{{ tunnel_name }}_remote_{{ remote_subnets_index }}"
           subnet: "{{ remote_subnets_item }}"
-          comment: _comment
+          comment: "{{ _comment }}"
       loop: "{{ remote_subnets }}"
       loop_control:
         loop_var: remote_subnets_item
@@ -82,8 +85,29 @@
         firewall_addrgrp:
           name: "{{ tunnel_name }}_remote"
           member: "{{ _remote_firewall_address_list }}"
-          comment: _comment
+          comment: "{{ _comment }}"
+      register: _remote_firewall_address_group_result
       delegate_to: fortimanager
+
+    - debug: var=_remote_firewall_address_group_result
+    
+    - name: Create firewall policy
+      fortinet.fortimanager.fmgr_pkg_firewall_policy:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}"
+        state: present
+        pkg: "{{ policy_pkg }}"
+        pkg_firewall_policy:
+          name: "{{ tunnel_name }}_policy"
+          action: accept
+          srcaddr: "{{ _local_firewall_address_group_result.meta.response_data.name }}"
+          dstaddr: "{{ _remote_firewall_address_group_result.meta.response_data.name }}"
+          service: "{{ firewall_policy_service_list }}"
+          schedule: always
+      register: _firewall_policy_result
+      delegate_to: fortimanager
+
+    - debug: var=_firewall_policy_result
 
     - name: Commiting changes
       fortinet.fortimanager.fmgr_pm_config_workspace_commit:

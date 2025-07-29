@@ -5,11 +5,11 @@
       - adom | default('', true) | trim != ''
     fail_msg: "adom input parameter must be present and non-empty"
 
-- name: Validate policy package name
+- name: Validate vdom name
   ansible.builtin.assert:
     that:
-      - policy_pkg | default('', true) | trim != ''
-    fail_msg: "policy_pkg input parameter must be present and non-empty"
+      - vdom | default('', true) | trim != ''
+    fail_msg: "vdom input parameter must be present and non-empty"
 
 - name: Validate ipsec tunnel policy name
   ansible.builtin.assert:
@@ -32,3 +32,11 @@
       - remote_subnets is not string and remote_subnets is not mapping and remote_subnets is iterable
       - remote_subnets | length > 0
     fail_msg: "remote_subnets must be a non-empty list"
+
+- name: Validate presence of firewall policy service name list
+  ansible.builtin.assert:
+    that:
+      - firewall_policy_service_list is defined
+      - firewall_policy_service_list is not string and firewall_policy_service_list is not mapping and firewall_policy_service_list is iterable
+      - firewall_policy_service_list | length > 0
+    fail_msg: "firewall_policy_service_list must be a non-empty list"

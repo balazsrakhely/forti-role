@@ -3,6 +3,11 @@
   ansible.builtin.include_tasks:
     file: validation.yaml
 
+- name: Set policy package name to default if not present
+  ansible.builtin.set_fact:
+    policy_pkg: "{{ vdom }}"
+  when: policy_pkg | default('', true) | trim == ''
+
 - name: Construct comment
   ansible.builtin.set_fact:
     _comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
