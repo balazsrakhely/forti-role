@@ -134,7 +134,7 @@
           dstaddr: "{{ _local_and_remote_address_list }}"
           service: "{{ firewall_policy_service_list }}"
           schedule: always
-          comment: "{{ _comment }}"
+          comments: "{{ _comment }}"
       register: _firewall_policy_result
       delegate_to: fortimanager
 
