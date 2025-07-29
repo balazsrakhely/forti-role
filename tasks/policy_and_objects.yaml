@@ -90,24 +90,44 @@
       delegate_to: fortimanager
 
     - debug: var=_remote_firewall_address_group_result
-    
-    - name: Create firewall policy
-      fortinet.fortimanager.fmgr_pkg_firewall_policy:
-        adom: "{{ adom }}"
-        workspace_locking_adom: "{{ adom }}"
-        state: present
-        pkg: "{{ policy_pkg }}"
-        pkg_firewall_policy:
-          name: "{{ tunnel_name }}_policy"
-          action: accept
-          srcaddr: "{{ _local_firewall_address_group_result.meta.response_data.name }}"
-          dstaddr: "{{ _remote_firewall_address_group_result.meta.response_data.name }}"
-          service: "{{ firewall_policy_service_list }}"
-          schedule: always
-      register: _firewall_policy_result
-      delegate_to: fortimanager
 
-    - debug: var=_firewall_policy_result
+    - name: Get existing policies
+      fortinet.fortimanager.fmgr_fact:
+        facts:
+          selector: "pkg_firewall_policy"
+          params:
+            adom: "{{ adom }}"
+            pkg: "{{ policy_pkg }}"
+            policy: ""
+      register: _firewall_policy_facts
+
+    - debug: var=_firewall_policy_facts
+
+    # - name: Generate policy id
+    #   ansible.builtin.set_fact:
+    #     _next_policyid: "{{ (policy_list | map(attribute='policyid') | max) + 1 }}"
+    #   vars:
+    #     policy_list: "{{ ansible_facts['pkg_firewall_policy'] }}"
+
+    # - name: Create firewall policy
+    #   fortinet.fortimanager.fmgr_pkg_firewall_policy:
+    #     adom: "{{ adom }}"
+    #     workspace_locking_adom: "{{ adom }}"
+    #     state: present
+    #     pkg: "{{ policy_pkg }}"
+    #     pkg_firewall_policy:
+    #       policyid: "-----------------------------------------------"
+    #       name: "{{ tunnel_name }}_policy"
+    #       action: accept
+    #       srcaddr: "{{ _local_firewall_address_group_result.meta.response_data.name }}"
+    #       dstaddr: "{{ _remote_firewall_address_group_result.meta.response_data.name }}"
+    #       service: "{{ firewall_policy_service_list }}"
+    #       schedule: always
+    #       comment: "{{ _comment }}"
+    #   register: _firewall_policy_result
+    #   delegate_to: fortimanager
+
+    # - debug: var=_firewall_policy_result
 
     - name: Commiting changes
       fortinet.fortimanager.fmgr_pm_config_workspace_commit:
