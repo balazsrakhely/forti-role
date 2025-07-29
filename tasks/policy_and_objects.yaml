@@ -100,6 +100,7 @@
             pkg: "{{ policy_pkg }}"
             policy: ""
       register: _firewall_policy_facts
+      delegate_to: fortimanager
 
     - debug: var=_firewall_policy_facts
 
