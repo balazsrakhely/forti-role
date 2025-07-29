@@ -104,12 +104,10 @@
 
     - debug: var=_firewall_policy_facts
 
-    # - name: Generate policy id
-    #   ansible.builtin.set_fact:
-    #     _next_policyid: "{{ (policy_list | map(attribute='policyid') | max) + 1 }}"
-    #   vars:
-    #     policy_list: "{{ ansible_facts['pkg_firewall_policy'] }}"
-
+    - name: Generate policy id
+      ansible.builtin.set_fact:
+        _next_policyid: "{{ (_firewall_policy_facts.meta.response_data | map(attribute='policyid') | max) + 1 }}"
+        
     # - name: Create firewall policy
     #   fortinet.fortimanager.fmgr_pkg_firewall_policy:
     #     adom: "{{ adom }}"
@@ -120,8 +118,10 @@
     #       policyid: "-----------------------------------------------"
     #       name: "{{ tunnel_name }}_policy"
     #       action: accept
-    #       srcaddr: "{{ _local_firewall_address_group_result.meta.response_data.name }}"
-    #       dstaddr: "{{ _remote_firewall_address_group_result.meta.response_data.name }}"
+    #       srcintf: "{{ _source_and_dest_interface_list }}"
+    #       dstintf: "{{ _source_and_dest_interface_list }}"
+    #       srcaddr: "{{ _local_and_remote_address_list }}"
+    #       dstaddr: "{{ _local_and_remote_address_list }}"
     #       service: "{{ firewall_policy_service_list }}"
     #       schedule: always
     #       comment: "{{ _comment }}"
