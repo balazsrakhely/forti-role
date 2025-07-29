@@ -107,28 +107,38 @@
     - name: Generate policy id
       ansible.builtin.set_fact:
         _next_policyid: "{{ (_firewall_policy_facts.meta.response_data | map(attribute='policyid') | max) + 1 }}"
-        
-    # - name: Create firewall policy
-    #   fortinet.fortimanager.fmgr_pkg_firewall_policy:
-    #     adom: "{{ adom }}"
-    #     workspace_locking_adom: "{{ adom }}"
-    #     state: present
-    #     pkg: "{{ policy_pkg }}"
-    #     pkg_firewall_policy:
-    #       policyid: "-----------------------------------------------"
-    #       name: "{{ tunnel_name }}_policy"
-    #       action: accept
-    #       srcintf: "{{ _source_and_dest_interface_list }}"
-    #       dstintf: "{{ _source_and_dest_interface_list }}"
-    #       srcaddr: "{{ _local_and_remote_address_list }}"
-    #       dstaddr: "{{ _local_and_remote_address_list }}"
-    #       service: "{{ firewall_policy_service_list }}"
-    #       schedule: always
-    #       comment: "{{ _comment }}"
-    #   register: _firewall_policy_result
-    #   delegate_to: fortimanager
 
-    # - debug: var=_firewall_policy_result
+    - debug: var=_next_policyid
+
+    - name: Set up interface list (source and dest together)
+      ansible.builtin.set_fact:
+        _source_and_dest_interface_list: "{{ source_interface_list + dest_interface_list }}"
+
+    - name: Set up address list (local and remote together)
+      ansible.builtin.set_fact:
+        _local_and_remote_address_list: "{{ [_local_firewall_address_group_result.meta.response_data.name] + [_remote_firewall_address_group_result.meta.response_data.name] }}"
+
+    - name: Create firewall policy
+      fortinet.fortimanager.fmgr_pkg_firewall_policy:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}"
+        state: present
+        pkg: "{{ policy_pkg }}"
+        pkg_firewall_policy:
+          policyid: "{{ _next_policyid }}"
+          name: "{{ tunnel_name }}_policy"
+          action: accept
+          srcintf: "{{ _source_and_dest_interface_list }}"
+          dstintf: "{{ _source_and_dest_interface_list }}"
+          srcaddr: "{{ _local_and_remote_address_list }}"
+          dstaddr: "{{ _local_and_remote_address_list }}"
+          service: "{{ firewall_policy_service_list }}"
+          schedule: always
+          comment: "{{ _comment }}"
+      register: _firewall_policy_result
+      delegate_to: fortimanager
+
+    - debug: var=_firewall_policy_result
 
     # - name: Commiting changes
     #   fortinet.fortimanager.fmgr_pm_config_workspace_commit:
