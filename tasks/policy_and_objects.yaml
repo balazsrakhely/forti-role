@@ -140,6 +140,38 @@
 
     - debug: var=_firewall_policy_result
 
+    - name: IPsec Phase 1
+      ipsec_phase_1:
+        workspace_locking_adom: "{{ adom }}"
+        device: "{{ forti_device }}"
+        vdom: "{{ vdom }}"
+        vpn_ipsec_phase1:
+          name: "{{ tunnel_name }}_phase1"
+          interface: "{{ local_interface }}"
+          remote-gw: "{{ remote_gateway }}"
+          psksecret: "{{ psksecret }}"
+          comments: "{{ _comment }}"
+      register: _ipsec_phase_1_result
+      delegate_to: fortimanager
+
+    - debug: var=_ipsec_phase_1_result
+
+    # - name: IPsec Phase 2
+    #   ipsec_phase_2:
+    #     workspace_locking_adom: "{{ adom }}"
+    #   register: _ipsec_phase_2_result
+    #   delegate_to: fortimanager
+
+    # - debug: var=_ipsec_phase_2_result
+
+    # - name: Create static route
+    #   static_route:
+    #     workspace_locking_adom: "{{ adom }}"
+    #   register: _static_route_result
+    #   delegate_to: fortimanager
+
+    # - debug: var=_static_route_result
+
     # - name: Commiting changes
     #   fortinet.fortimanager.fmgr_pm_config_workspace_commit:
     #     workspace_locking_adom: "{{ adom }}"
