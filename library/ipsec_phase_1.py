@@ -99,16 +99,16 @@ def main():
     if not response_raw:
         module.fail_json(msg="No response from FortiManager (empty string). Check connection or API formatting.")
 
-    try:
-        response = json.loads(response_raw)
-    except json.JSONDecodeError as e:
-        module.fail_json(msg=f"Failed to decode FortiManager response: {str(e)}", raw=response_raw)
+    # try:
+    #     response = json.loads(response_raw)
+    # except json.JSONDecodeError as e:
+    #     module.fail_json(msg=f"Failed to decode FortiManager response: {str(e)}", raw=response_raw)
 
     module.exit_json(
         changed=True,
         meta={
             "request": api_body,
-            "response_data": response,
+            "response_data": response_raw,
         }
     )
 
