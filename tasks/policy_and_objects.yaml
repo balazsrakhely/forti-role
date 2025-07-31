@@ -141,7 +141,7 @@
     - debug: var=_firewall_policy_result
 
     - name: IPsec Phase 1
-      fmgr_vpn_ipsec_phase1_interface:
+      ipsec_phase_1:
         workspace_locking_adom: "{{ adom }}"
         device: "{{ forti_device }}"
         vdom: "{{ vdom }}"
