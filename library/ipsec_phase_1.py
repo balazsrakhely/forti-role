@@ -89,7 +89,13 @@ def main():
         'id': 1,
     }
 
-    response_raw = connection.send(json.dumps(api_body))
+    params = [{
+        'url': f'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface',
+        'data': [data]
+    }]
+
+    # response_raw = connection.send(json.dumps(api_body))
+    response_raw = connection.send_request("add", params)
     if not response_raw:
         module.fail_json(msg="No response from FortiManager (empty string). Check connection or API formatting.")
 
