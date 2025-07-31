@@ -7,6 +7,9 @@ def main():
     urls_list = [
         'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface'
     ]
+    perobject_urls_list = [
+        'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface/{phase1-interface}'
+    ]
     url_params = ['device', 'vdom']
     module_primary_key = 'name'
     module_arg_spec = {
@@ -36,7 +39,7 @@ def main():
     if not module._socket_path:
         module.fail_json(msg='MUST RUN IN HTTPAPI MODE')
     connection = Connection(module._socket_path)
-    fmgr = NAPIManager(urls_list, [], module_primary_key, url_params,
+    fmgr = NAPIManager(urls_list, perobject_urls_list, module_primary_key, url_params,
                        module, connection, top_level_schema_name='data')
     fmgr.validate_parameters(params_validation_blob)
     fmgr.process_curd()
