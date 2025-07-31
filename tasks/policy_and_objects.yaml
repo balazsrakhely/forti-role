@@ -145,7 +145,7 @@
         device: "{{ forti_device }}"
         vdom: "{{ vdom }}"
         vpn_ipsec_phase1:
-          name: "{{ tunnel_name }}_phase1"
+          name: "{{ tunnel_name }}"
           interface: "{{ local_interface }}"
           remote-gw: "{{ remote_gateway }}"
           psksecret: "{{ psksecret }}"

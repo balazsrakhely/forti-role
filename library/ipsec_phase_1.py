@@ -79,36 +79,36 @@ def main():
     device = module.params["device"]
     vdom = module.params["vdom"]
     data = module.params["vpn_ipsec_phase1"]
-
-    api_body = {
-        'method': 'add',
-        'params': [{
-            'url': f'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface',
-            'data': [data]
-        }],
-        'id': 1,
-    }
+    url = f'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface'
 
     params = [{
-        'url': f'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface',
+        'url': url,
         'data': data
     }]
 
-    # response_raw = connection.send(json.dumps(api_body))
     response_raw = connection.send_request("add", params)
     if not response_raw:
-        module.fail_json(msg="No response from FortiManager (empty string). Check connection or API formatting.")
+        module.fail_json(msg="No response from FortiManager. Check connection or API formatting.")
 
-    # try:
-    #     response = json.loads(response_raw)
-    # except json.JSONDecodeError as e:
-    #     module.fail_json(msg=f"Failed to decode FortiManager response: {str(e)}", raw=response_raw)
+    if not isinstance(response_raw, list) or len(response_raw) < 2:
+        module.fail_json(msg=f"Invalid response structure from FortiManager: {str(response_raw)}")
+
+    response_obj = response_raw[1]
+    response_status = response_obj.get('status')
+    response_status_code = response_status.get('code')
+    response_status_message = response_status.get('message')
+    request_url = response_obj.get('url', url)
+
+    if response_status_code < 0:
+        module.fail_json(msg=f"FortiManager API error {response_status_code}: {response_status_message}")
 
     module.exit_json(
-        changed=True,
+        rc = response_status_code,
         meta={
-            "request": api_body,
-            "response_data": response_raw,
+            'request_url': request_url,
+            'response_code': response_status_code,
+            'response_data': response_raw,
+            'response_message': response_status_message,
         }
     )
 
