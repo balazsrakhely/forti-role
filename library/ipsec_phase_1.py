@@ -81,7 +81,7 @@ def main():
     data = module.params["vpn_ipsec_phase1"]
 
     api_body = {
-        'method': 'set',
+        'method': 'add',
         'params': [{
             'url': f'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface',
             'data': [data]
