@@ -39,7 +39,7 @@ def main():
     fmgr = NAPIManager('full crud', module_arg_spec, urls_list, module_primary_key, url_params,
                        module, connection, top_level_schema_name='data')
     fmgr.validate_parameters(params_validation_blob)
-    fmgr.process_partial_curd()
+    fmgr.process_crud()
 
     module.exit_json(meta=module.params)
 
