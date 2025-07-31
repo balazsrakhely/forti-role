@@ -90,10 +90,11 @@ def main():
     if not response_raw:
         module.fail_json(msg="No response from FortiManager. Check connection or API formatting.")
 
-    if not isinstance(response_raw, list) or len(response_raw) < 2:
-        module.fail_json(msg=f"Invalid response structure from FortiManager: {str(response_raw)}")
+    if (not isinstance(response_raw, list) and not isinstance(response_raw, tuple)) or len(response_raw) < 2:
+        module.fail_json(msg="Unexpected FortiManager response", response=response_raw)
 
     response_obj = response_raw[1]
+    response_data = response_obj.get('data', {})
     response_status = response_obj.get('status')
     response_status_code = response_status.get('code')
     response_status_message = response_status.get('message')
@@ -107,7 +108,7 @@ def main():
         meta={
             'request_url': request_url,
             'response_code': response_status_code,
-            'response_data': response_raw,
+            'response_data': response_data,
             'response_message': response_status_message,
         }
     )
