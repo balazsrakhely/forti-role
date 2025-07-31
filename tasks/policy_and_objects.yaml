@@ -145,6 +145,7 @@
         workspace_locking_adom: "{{ adom }}"
         device: "{{ forti_device }}"
         vdom: "{{ vdom }}"
+        state: present
         vpn_ipsec_phase1:
           name: "{{ tunnel_name }}_phase1"
           interface: "{{ local_interface }}"

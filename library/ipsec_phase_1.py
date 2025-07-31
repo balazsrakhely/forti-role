@@ -28,7 +28,7 @@ def main():
             }
         },
     }
-    module_option_spec = get_module_arg_spec('partial crud')
+    module_option_spec = get_module_arg_spec('full crud')
     module_arg_spec.update(module_option_spec)
     params_validation_blob = []
     module = AnsibleModule(argument_spec=check_parameter_bypass(module_arg_spec, 'vpn_ipsec_phase1'),
@@ -36,7 +36,7 @@ def main():
     if not module._socket_path:
         module.fail_json(msg='MUST RUN IN HTTPAPI MODE')
     connection = Connection(module._socket_path)
-    fmgr = NAPIManager('partial crud', module_arg_spec, urls_list, module_primary_key, url_params,
+    fmgr = NAPIManager('full crud', module_arg_spec, urls_list, module_primary_key, url_params,
                        module, connection, top_level_schema_name='data')
     fmgr.validate_parameters(params_validation_blob)
     fmgr.process_partial_curd()
