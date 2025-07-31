@@ -91,7 +91,7 @@ def main():
 
     params = [{
         'url': f'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface',
-        'data': [data]
+        'data': data
     }]
 
     # response_raw = connection.send(json.dumps(api_body))
