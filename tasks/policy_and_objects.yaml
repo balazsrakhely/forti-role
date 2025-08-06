@@ -196,7 +196,7 @@
         device: "{{ forti_device }}"
         vdom: "{{ vdom }}"
         router_static:
-          dst: "{{ remote_subnets_item }}"
+          dst: "{{ [remote_subnets_item | ipaddr('address'), remote_subnets_item | ipaddr('netmask')] }}"
           device: "{{ _ipsec_phase_1_result.meta.response_data.name }}"
           comment: "{{ _comment }}"
       loop: "{{ remote_subnets }}"
