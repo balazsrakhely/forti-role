@@ -167,7 +167,7 @@
           peertype: "{{ phase1_peertype | default('any', true) }}"
           net-device: "{{ phase1_net_device | default('disable', true) }}"
           dhgrp: "{{ phase1_dhgrp | default(['16'], true) }}"
-          ike_version: "{{ phase1_ike_version | default('2', true) }}"
+          ike-version: "{{ phase1_ike_version | default('2', true) }}"
           comments: "{{ _comment }}"
       register: _ipsec_phase_1_result
       delegate_to: fortimanager
