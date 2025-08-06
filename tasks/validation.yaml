@@ -35,9 +35,9 @@
   ansible.builtin.assert:
     that:
       - _local_address_group_present or _local_subnets_present
-  fail_msg: >
-    Either 'local_address_group' must be a defined non-empty string,
-    or 'local_subnets' must be a defined list with at least one item.
+    fail_msg: >
+      Either 'local_address_group' must be a defined non-empty string,
+      or 'local_subnets' must be a defined list with at least one item.
 
 - name: Validate presence of remote subnets
   ansible.builtin.assert:
