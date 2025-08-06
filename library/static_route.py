@@ -27,6 +27,10 @@ def main():
     vdom = module.params["vdom"]
     data = module.params["router_static"]
     url = f'pm/config/device/{device}/vdom/{vdom}/router/static'
+    dst = data['dst']
+
+    if not isinstance(dst, list) or len(dst) != 2 or dst[0] is None or dst[1] is None:
+        module.fail_json(msg=f"Invalid 'dst' destination parameter: {dst}")
 
     params = [{
         'url': url,
