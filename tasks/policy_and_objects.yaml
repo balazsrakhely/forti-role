@@ -6,139 +6,152 @@
         adom: "{{ adom }}"
       delegate_to: fortimanager
 
-    # - name: Initialize local and remote firewall address name list for address group
-    #   ansible.builtin.set_fact:
-    #     _local_firewall_address_list: []
-    #     _remote_firewall_address_list: []
+    - name: Initialize local firewall address name list for address group
+      ansible.builtin.set_fact:
+        _local_firewall_address_list: []
+      when: not _local_address_group_present
 
-    # - name: Create local firewall address
-    #   fortinet.fortimanager.fmgr_firewall_address:
-    #     adom: "{{ adom }}"
-    #     workspace_locking_adom: "{{ adom }}" 
-    #     state: "present"
-    #     firewall_address:
-    #       name: "{{ tunnel_name }}_local_{{ local_subnets_index }}"
-    #       subnet: "{{ local_subnets_item }}"
-    #       comment: "{{ _comment }}"
-    #   loop: "{{ local_subnets }}"
-    #   loop_control:
-    #     loop_var: local_subnets_item
-    #     index_var: local_subnets_index
-    #   register: _local_firewall_address_result
-    #   delegate_to: fortimanager
+    - name: Initialize remote firewall address name list for address group
+      ansible.builtin.set_fact:
+        _remote_firewall_address_list: []
 
-    # - debug: var=_local_firewall_address_result
+    - name: Create local firewall address
+      fortinet.fortimanager.fmgr_firewall_address:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}" 
+        state: present
+        firewall_address:
+          name: "{{ tunnel_name }}_local_{{ local_subnets_index }}"
+          subnet: "{{ local_subnets_item }}"
+          comment: "{{ _comment }}"
+      loop: "{{ local_subnets }}"
+      loop_control:
+        loop_var: local_subnets_item
+        index_var: local_subnets_index
+      register: _local_firewall_address_result
+      delegate_to: fortimanager
+      when: not _local_address_group_present
 
-    # - name: Set up local firewall address name list for address group
-    #   ansible.builtin.set_fact:
-    #     _local_firewall_address_list: "{{ _local_firewall_address_list + [item.meta.response_data.name]}}"
-    #   loop: "{{ _local_firewall_address_result.results }}"
-    #   loop_control:
-    #     loop_var: item
-    #   when: item.meta.response_code == 0
+    - debug: var=_local_firewall_address_result
+      when: not _local_address_group_present
 
-    # - name: Create address group for local addresses
-    #   fortinet.fortimanager.fmgr_firewall_addrgrp:
-    #     adom: "{{ adom }}"
-    #     workspace_locking_adom: "{{ adom }}"
-    #     state: present
-    #     firewall_addrgrp:
-    #       name: "{{ tunnel_name }}_local"
-    #       member: "{{ _local_firewall_address_list }}"
-    #       comment: "{{ _comment }}"
-    #   register: _local_firewall_address_group_result
-    #   delegate_to: fortimanager
+    - name: Set up local firewall address name list for address group
+      ansible.builtin.set_fact:
+        _local_firewall_address_list: "{{ _local_firewall_address_list + [item.meta.response_data.name]}}"
+      loop: "{{ _local_firewall_address_result.results }}"
+      loop_control:
+        loop_var: item
+      when: not _local_address_group_present and item.meta.response_code == 0
 
-    # - debug: var=_local_firewall_address_group_result
+    - name: Create address group for local addresses
+      fortinet.fortimanager.fmgr_firewall_addrgrp:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}"
+        state: present
+        firewall_addrgrp:
+          name: "{{ tunnel_name }}_local"
+          member: "{{ _local_firewall_address_list }}"
+          comment: "{{ _comment }}"
+      register: _local_firewall_address_group_result
+      delegate_to: fortimanager
+      when: not _local_address_group_present
 
-    # - name: Create remote firewall address
-    #   fortinet.fortimanager.fmgr_firewall_address:
-    #     adom: "{{ adom }}"
-    #     workspace_locking_adom: "{{ adom }}"
-    #     state: "present"
-    #     firewall_address:
-    #       name: "{{ tunnel_name }}_remote_{{ remote_subnets_index }}"
-    #       subnet: "{{ remote_subnets_item }}"
-    #       comment: "{{ _comment }}"
-    #   loop: "{{ remote_subnets }}"
-    #   loop_control:
-    #     loop_var: remote_subnets_item
-    #     index_var: remote_subnets_index
-    #   register: _remote_firewall_address_result
-    #   delegate_to: fortimanager
+    - debug: var=_local_firewall_address_group_result
+      when: not _local_address_group_present
 
-    # - debug: var=_remote_firewall_address_result
+    - name: Create remote firewall address
+      fortinet.fortimanager.fmgr_firewall_address:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}"
+        state: "present"
+        firewall_address:
+          name: "{{ tunnel_name }}_remote_{{ remote_subnets_index }}"
+          subnet: "{{ remote_subnets_item }}"
+          comment: "{{ _comment }}"
+      loop: "{{ remote_subnets }}"
+      loop_control:
+        loop_var: remote_subnets_item
+        index_var: remote_subnets_index
+      register: _remote_firewall_address_result
+      delegate_to: fortimanager
 
-    # - name: Set up remote firewall address name list for address group
-    #   ansible.builtin.set_fact:
-    #     _remote_firewall_address_list: "{{ _remote_firewall_address_list + [item.meta.response_data.name]}}"
-    #   loop: "{{ _remote_firewall_address_result.results }}"
-    #   loop_control:
-    #     loop_var: item
-    #   when: item.meta.response_code == 0
+    - debug: var=_remote_firewall_address_result
 
-    # - name: Create address group for remote addresses
-    #   fortinet.fortimanager.fmgr_firewall_addrgrp:
-    #     adom: "{{ adom }}"
-    #     workspace_locking_adom: "{{ adom }}"
-    #     state: present
-    #     firewall_addrgrp:
-    #       name: "{{ tunnel_name }}_remote"
-    #       member: "{{ _remote_firewall_address_list }}"
-    #       comment: "{{ _comment }}"
-    #   register: _remote_firewall_address_group_result
-    #   delegate_to: fortimanager
+    - name: Set up remote firewall address name list for address group
+      ansible.builtin.set_fact:
+        _remote_firewall_address_list: "{{ _remote_firewall_address_list + [item.meta.response_data.name]}}"
+      loop: "{{ _remote_firewall_address_result.results }}"
+      loop_control:
+        loop_var: item
+      when: item.meta.response_code == 0
 
-    # - debug: var=_remote_firewall_address_group_result
+    - name: Create address group for remote addresses
+      fortinet.fortimanager.fmgr_firewall_addrgrp:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}"
+        state: present
+        firewall_addrgrp:
+          name: "{{ tunnel_name }}_remote"
+          member: "{{ _remote_firewall_address_list }}"
+          comment: "{{ _comment }}"
+      register: _remote_firewall_address_group_result
+      delegate_to: fortimanager
 
-    # - name: Get existing policies
-    #   fortinet.fortimanager.fmgr_fact:
-    #     facts:
-    #       selector: "pkg_firewall_policy"
-    #       params:
-    #         adom: "{{ adom }}"
-    #         pkg: "{{ policy_pkg }}"
-    #         policy: ""
-    #   register: _firewall_policy_facts
-    #   delegate_to: fortimanager
+    - debug: var=_remote_firewall_address_group_result
 
-    # - debug: var=_firewall_policy_facts
+    - name: Address group names
+      ansible.builtin.set_fact:
+        _local_address_group_name: "{{ local_address_group if _local_address_group_present else _local_firewall_address_group_result.meta.response_data.name }}"
+        _remote_address_group_name: "{{ _remote_firewall_address_group_result.meta.response_data.name }}"
 
-    # - name: Generate policy id
-    #   ansible.builtin.set_fact:
-    #     _next_policyid: "{{ (_firewall_policy_facts.meta.response_data | map(attribute='policyid') | max) + 1 }}"
+    - name: Get existing policies
+      fortinet.fortimanager.fmgr_fact:
+        facts:
+          selector: "pkg_firewall_policy"
+          params:
+            adom: "{{ adom }}"
+            pkg: "{{ _policy_pkg }}"
+            policy: ""
+      register: _firewall_policy_facts
+      delegate_to: fortimanager
 
-    # - debug: var=_next_policyid
+    - debug: var=_firewall_policy_facts
 
-    # - name: Set up interface list (source and dest together)
-    #   ansible.builtin.set_fact:
-    #     _source_and_dest_interface_list: "{{ source_interface_list + dest_interface_list }}"
+    - name: Generate policy id
+      ansible.builtin.set_fact:
+        _next_policyid: "{{ (_firewall_policy_facts.meta.response_data | map(attribute='policyid') | max) + 1 }}"
 
-    # - name: Set up address list (local and remote together)
-    #   ansible.builtin.set_fact:
-    #     _local_and_remote_address_list: "{{ [_local_firewall_address_group_result.meta.response_data.name] + [_remote_firewall_address_group_result.meta.response_data.name] }}"
+    - debug: var=_next_policyid
 
-    # - name: Create firewall policy
-    #   fortinet.fortimanager.fmgr_pkg_firewall_policy:
-    #     adom: "{{ adom }}"
-    #     workspace_locking_adom: "{{ adom }}"
-    #     state: present
-    #     pkg: "{{ policy_pkg }}"
-    #     pkg_firewall_policy:
-    #       policyid: "{{ _next_policyid }}"
-    #       name: "{{ tunnel_name }}_policy"
-    #       action: accept
-    #       srcintf: "{{ _source_and_dest_interface_list }}"
-    #       dstintf: "{{ _source_and_dest_interface_list }}"
-    #       srcaddr: "{{ _local_and_remote_address_list }}"
-    #       dstaddr: "{{ _local_and_remote_address_list }}"
-    #       service: "{{ firewall_policy_service_list }}"
-    #       schedule: always
-    #       comments: "{{ _comment }}"
-    #   register: _firewall_policy_result
-    #   delegate_to: fortimanager
+    - name: Set up interface list (source and dest together)
+      ansible.builtin.set_fact:
+        _source_and_dest_interface_list: "{{ source_interface_list + dest_interface_list }}"
 
-    # - debug: var=_firewall_policy_result
+    - name: Set up address list (local and remote together)
+      ansible.builtin.set_fact:
+        _local_and_remote_address_list: "{{ [_local_address_group_name] + [_remote_address_group_name] }}"
+
+    - name: Create firewall policy
+      fortinet.fortimanager.fmgr_pkg_firewall_policy:
+        adom: "{{ adom }}"
+        workspace_locking_adom: "{{ adom }}"
+        state: present
+        pkg: "{{ _policy_pkg }}"
+        pkg_firewall_policy:
+          policyid: "{{ _next_policyid }}"
+          name: "{{ tunnel_name }}_policy"
+          action: accept
+          srcintf: "{{ _source_and_dest_interface_list }}"
+          dstintf: "{{ _source_and_dest_interface_list }}"
+          srcaddr: "{{ _local_and_remote_address_list }}"
+          dstaddr: "{{ _local_and_remote_address_list }}"
+          service: "{{ firewall_policy_service_list }}"
+          schedule: always
+          comments: "{{ _comment }}"
+      register: _firewall_policy_result
+      delegate_to: fortimanager
+
+    - debug: var=_firewall_policy_result
 
     - name: IPsec Phase 1
       ipsec_phase_1:
@@ -146,30 +159,53 @@
         vdom: "{{ vdom }}"
         vpn_ipsec_phase1:
           name: "{{ tunnel_name }}"
-          interface: "{{ local_interface }}"
-          remote-gw: "{{ remote_gateway }}"
-          psksecret: "{{ psksecret }}"
+          interface: "{{ phase1_local_interface }}"
+          remote-gw: "{{ phase1_remote_gateway }}"
+          psksecret: "{{ phase1_psksecret }}"
+          proposal: "{{ phase1_proposal | default(['aes256-sha256'], true) }}"
+          auto-negotiate: "{{ phase1_auto_negotiate | default('enable', true) }}"
+          peertype: "{{ phase1_peertype | default('any', true) }}"
+          net-device: "{{ phase1_net_device | default('disable', true) }}"
+          dhgrp: "{{ phase1_dhgrp | default(['16'], true) }}"
+          ike_version: "{{ phase1_ike_version | default('2', true) }}"
           comments: "{{ _comment }}"
       register: _ipsec_phase_1_result
       delegate_to: fortimanager
 
     - debug: var=_ipsec_phase_1_result
 
-    # - name: IPsec Phase 2
-    #   ipsec_phase_2:
-    #     workspace_locking_adom: "{{ adom }}"
-    #   register: _ipsec_phase_2_result
-    #   delegate_to: fortimanager
+    - name: IPsec Phase 2
+      ipsec_phase_2:
+        device: "{{ forti_device }}"
+        vdom: "{{ vdom }}"
+        vpn_ipsec_phase2:
+          name: "{{ tunnel_name }}"
+          phase1name: "{{ _ipsec_phase_1_result.meta.response_data.name }}"
+          src-name: "{{ _local_address_group_name }}"
+          dst-name: "{{ _remote_address_group_name }}"
+          proposal: "{{ phase1_proposal | default(['aes256-sha256'], true) }}"
+          auto-negotiate: "{{ phase1_auto_negotiate | default('enable', true) }}"
+          dhgrp: "{{ phase1_dhgrp | default(['16'], true) }}"
+      register: _ipsec_phase_2_result
+      delegate_to: fortimanager
 
-    # - debug: var=_ipsec_phase_2_result
+    - debug: var=_ipsec_phase_2_result
 
-    # - name: Create static route
-    #   static_route:
-    #     workspace_locking_adom: "{{ adom }}"
-    #   register: _static_route_result
-    #   delegate_to: fortimanager
+    - name: Create static route
+      static_route:
+        device: "{{ forti_device }}"
+        vdom: "{{ vdom }}"
+        router_static:
+          dst: "{{ remote_subnets_item }}"
+          device: "{{ _ipsec_phase_1_result.meta.response_data.name }}"
+          comment: "{{ _comment }}"
+      loop: "{{ remote_subnets }}"
+      loop_control:
+        loop_var: remote_subnets_item
+      register: _static_route_result
+      delegate_to: fortimanager
 
-    # - debug: var=_static_route_result
+    - debug: var=_static_route_result
 
     # - name: Commiting changes
     #   fortinet.fortimanager.fmgr_pm_config_workspace_commit:

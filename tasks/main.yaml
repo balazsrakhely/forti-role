@@ -5,8 +5,7 @@
 
 - name: Set policy package name to default if not present
   ansible.builtin.set_fact:
-    policy_pkg: "{{ vdom }}"
-  when: policy_pkg | default('', true) | trim == ''
+    _policy_pkg: "{{ policy_pkg if policy_pkg | default('', true) | trim != '' else vdom }}"
 
 - name: Construct comment
   ansible.builtin.set_fact:

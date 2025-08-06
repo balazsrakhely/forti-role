@@ -5,6 +5,12 @@
       - adom | default('', true) | trim != ''
     fail_msg: "adom input parameter must be present and non-empty"
 
+- name: Validate forti device name
+  ansible.builtin.assert:
+    that:
+      - forti_device | default('', true) | trim != ''
+    fail_msg: "forti_device input parameter must be present and non-empty"
+
 - name: Validate vdom name
   ansible.builtin.assert:
     that:
@@ -17,13 +23,21 @@
       - tunnel_name | default('', true) | trim != ''
     fail_msg: "A unique, non-empty tunnel_name is required for the ruleset"
 
-- name: Validate presence of local subnets
+- name: Check if local_address_group is present
+  set_fact:
+    _local_address_group_present: "{{ local_address_group | default('', true) | trim != '' }}"
+
+- name: Check if local_subnets is present
+  set_fact:
+    _local_subnets_present: "{{ local_subnets is defined and local_subnets is not string and local_subnets is not mapping and local_subnets is iterable and local_subnets | length > 0 }}"
+
+- name: Validate presence of local address(es) / subnets
   ansible.builtin.assert:
     that:
-      - local_subnets is defined
-      - local_subnets is not string and local_subnets is not mapping and local_subnets is iterable
-      - local_subnets | length > 0
-    fail_msg: "local_subnets must be a non-empty list"
+      - _local_address_group_present or _local_subnets_present
+  fail_msg: >
+    Either 'local_address_group' must be a defined non-empty string,
+    or 'local_subnets' must be a defined list with at least one item.
 
 - name: Validate presence of remote subnets
   ansible.builtin.assert:
@@ -33,6 +47,22 @@
       - remote_subnets | length > 0
     fail_msg: "remote_subnets must be a non-empty list"
 
+- name: Validate presence of source interface list
+  ansible.builtin.assert:
+    that:
+      - source_interface_list is defined
+      - source_interface_list is not string and source_interface_list is not mapping and source_interface_list is iterable
+      - source_interface_list | length > 0
+    fail_msg: "source_interface_list must be a non-empty list"
+
+- name: Validate presence of destination interface list
+  ansible.builtin.assert:
+    that:
+      - dest_interface_list is defined
+      - dest_interface_list is not string and dest_interface_list is not mapping and dest_interface_list is iterable
+      - dest_interface_list | length > 0
+    fail_msg: "dest_interface_list must be a non-empty list"
+
 - name: Validate presence of firewall policy service name list
   ansible.builtin.assert:
     that:
@@ -40,3 +70,21 @@
       - firewall_policy_service_list is not string and firewall_policy_service_list is not mapping and firewall_policy_service_list is iterable
       - firewall_policy_service_list | length > 0
     fail_msg: "firewall_policy_service_list must be a non-empty list"
+
+- name: Validate presence of phase1 local interface input
+  ansible.builtin.assert:
+    that:
+      - phase1_local_interface | default('', true) | trim != ''
+    fail_msg: "phase1_local_interface input parameter must be present and non-empty"
+
+- name: Validate presence of phase1 remote gateway input
+  ansible.builtin.assert:
+    that:
+      - phase1_remote_gateway | default('', true) | trim != ''
+    fail_msg: "phase1_remote_gateway input parameter must be present and non-empty"
+
+- name: Validate presence of phase1 psksecret input
+  ansible.builtin.assert:
+    that:
+      - phase1_psksecret | default('', true) | trim != ''
+    fail_msg: "phase1_psksecret input parameter must be present and non-empty"
