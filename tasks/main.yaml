@@ -11,6 +11,6 @@
   ansible.builtin.set_fact:
     _comment: "{{ (comment + ', ') if comment | default('', true) else '' }}Created by Ansible"
 
-- name: Policy and Objects
+- name: Fortimanager frame
   ansible.builtin.include_tasks:
-    file: policy_and_objects.yaml
+    file: fortimanager_frame.yaml

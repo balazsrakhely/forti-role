@@ -7,6 +7,14 @@
         adom: "{{ adom }}"
       delegate_to: fortimanager
 
+    - name: Policy and Objects
+      ansible.builtin.include_tasks:
+        file: policy_and_objects.yaml
+
+    - name: Device Manager
+      ansible.builtin.include_tasks:
+        file: device_manager.yaml
+
     - name: Commiting changes
       fortinet.fortimanager.fmgr_pm_config_workspace_commit:
         workspace_locking_adom: "{{ adom }}"
