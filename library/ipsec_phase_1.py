@@ -15,8 +15,6 @@ def main():
                 'psksecret': {'required': True, 'type': 'str'},
                 'proposal': {'required': False, 'type': 'list', 'default': ['aes256-sha256']},
                 'auto-negotiate': {'required': False, 'type': 'str', 'choices': ['enable', 'disable'], 'default': 'enable'},
-                'peertype': {'required': False, 'type': 'str', 'default': 'any'},
-                'net-device': {'required': False, 'type': 'str', 'choices': ['enable', 'disable'], 'default': 'disable'},
                 'dhgrp': {'required': False, 'type': 'list', 'choices': ['1', '2', '5', '14', '15', '16', '17', '18', '19', '20', '21', '27', '28', '29', '30', '31', '32'], 'default': ['16']},
                 'ike-version': {'required': False, 'type': 'str', 'choices': ['1', '2'], 'default': '2'},
                 'comments': {'required': False, 'type': 'str'},

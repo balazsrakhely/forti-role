@@ -164,8 +164,6 @@
           psksecret: "{{ phase1_psksecret }}"
           proposal: "{{ phase1_proposal | default(['aes256-sha256'], true) }}"
           auto-negotiate: "{{ phase1_auto_negotiate | default('enable', true) }}"
-          peertype: "{{ phase1_peertype | default('any', true) }}"
-          net-device: "{{ phase1_net_device | default('disable', true) }}"
           dhgrp: "{{ phase1_dhgrp | default(['16'], true) }}"
           ike-version: "{{ phase1_ike_version | default('2', true) }}"
           comments: "{{ _comment }}"
@@ -183,9 +181,9 @@
           phase1name: "{{ _ipsec_phase_1_result.meta.response_data.name }}"
           src-name: "{{ _local_address_group_name }}"
           dst-name: "{{ _remote_address_group_name }}"
-          proposal: "{{ phase1_proposal | default(['aes256-sha256'], true) }}"
-          auto-negotiate: "{{ phase1_auto_negotiate | default('enable', true) }}"
-          dhgrp: "{{ phase1_dhgrp | default(['16'], true) }}"
+          proposal: "{{ phase2_proposal | default(['aes256-sha256'], true) }}"
+          auto-negotiate: "{{ phase2_auto_negotiate | default('enable', true) }}"
+          dhgrp: "{{ phase2_dhgrp | default(['16'], true) }}"
       register: _ipsec_phase_2_result
       delegate_to: fortimanager
 
