@@ -1,0 +1,52 @@
+---
+- name: IPsec Phase 1
+  ipsec_phase_1:
+    device: "{{ forti_device }}"
+    vdom: "{{ vdom }}"
+    vpn_ipsec_phase1:
+      name: "{{ tunnel_name }}"
+      interface: "{{ phase1_local_interface }}"
+      remote-gw: "{{ phase1_remote_gateway }}"
+      psksecret: "{{ phase1_psksecret }}"
+      proposal: "{{ phase1_proposal | default(['aes256-sha256'], true) }}"
+      auto-negotiate: "{{ phase1_auto_negotiate | default('enable', true) }}"
+      dhgrp: "{{ phase1_dhgrp | default(['16'], true) }}"
+      ike-version: "{{ phase1_ike_version | default('2', true) }}"
+      comments: "{{ _comment }}"
+  register: _ipsec_phase_1_result
+  delegate_to: fortimanager
+
+- debug: var=_ipsec_phase_1_result
+
+- name: IPsec Phase 2
+  ipsec_phase_2:
+    device: "{{ forti_device }}"
+    vdom: "{{ vdom }}"
+    vpn_ipsec_phase2:
+      name: "{{ tunnel_name }}"
+      phase1name: "{{ _ipsec_phase_1_result.meta.response_data.name }}"
+      src-name: "{{ _local_address_group_name }}"
+      dst-name: "{{ _remote_address_group_name }}"
+      proposal: "{{ phase2_proposal | default(['aes256-sha256'], true) }}"
+      auto-negotiate: "{{ phase2_auto_negotiate | default('enable', true) }}"
+      dhgrp: "{{ phase2_dhgrp | default(['16'], true) }}"
+  register: _ipsec_phase_2_result
+  delegate_to: fortimanager
+
+- debug: var=_ipsec_phase_2_result
+
+- name: Create static route
+  static_route:
+    device: "{{ forti_device }}"
+    vdom: "{{ vdom }}"
+    router_static:
+      dst: "{{ [(remote_subnets_item | ansible.utils.ipaddr('address')) or (remote_subnets_item | ansible.utils.ipaddr('network')), remote_subnets_item | ansible.utils.ipaddr('netmask')] }}"
+      device: "{{ _ipsec_phase_1_result.meta.response_data.name }}"
+      comment: "{{ _comment }}"
+  loop: "{{ remote_subnets }}"
+  loop_control:
+    loop_var: remote_subnets_item
+  register: _static_route_result
+  delegate_to: fortimanager
+
+- debug: var=_static_route_result

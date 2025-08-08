@@ -1,0 +1,21 @@
+---
+- name: FortiManager Policy & Objects block
+  block:
+    - name: Locking adom
+      fortinet.fortimanager.fmgr_pm_config_workspace_lock:
+        workspace_locking_adom: "{{ adom }}"
+        adom: "{{ adom }}"
+      delegate_to: fortimanager
+
+    # - name: Commiting changes
+    #   fortinet.fortimanager.fmgr_pm_config_workspace_commit:
+    #     workspace_locking_adom: "{{ adom }}"
+    #     adom: "{{ adom }}"
+    #   delegate_to: fortimanager
+
+  always:
+    - name: Unlocking adom
+      fortinet.fortimanager.fmgr_pm_config_workspace_unlock:
+        workspace_locking_adom: "{{ adom }}"
+        adom: "{{ adom }}"
+      delegate_to: fortimanager
