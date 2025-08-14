@@ -36,6 +36,20 @@ def main():
     data = module.params["vpn_ipsec_phase1"]
     url = f'pm/config/device/{device}/vdom/{vdom}/vpn/ipsec/phase1-interface'
 
+    proposal = data["proposal"]
+    allowed_proposal = ['aes128-sha256','aes128-sha512','aes256-sha256','aes256-sha512']
+    proposal = [p.lower() for p in proposal]
+    proposal = set(proposal)
+    if len(proposal) == 0:
+        module.fail_json(msg=f"At least one value is required for proposal. Allowed values are: {allowed_proposal}")
+    invalid_proposal = [p for p in proposal if p not in allowed_proposal]
+    if invalid_proposal:
+        module.fail_json(msg=f"Invalid proposal value(s): {invalid_proposal}. Allowed values are: {allowed_proposal}")
+    data["proposal"] = proposal
+
+    if len(data["dhgrp"]) == 0:
+        module.fail_json(msg=f"At least one value is required for dhgrp.")
+
     params = [{
         'url': url,
         'data': data

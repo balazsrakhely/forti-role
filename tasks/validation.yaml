@@ -39,6 +39,16 @@
       Either 'local_address_group' must be a defined non-empty string,
       or 'local_subnets' must be a defined list with at least one item.
 
+- name: Validate elements of local subnets if group not defined
+  ansible.builtin.assert:
+    that:
+      - local_subnets_item is ansible.utils.ipv4
+      - "'/' in local_subnets_item"
+  loop: "{{ local_subnets }}"
+  loop_control:
+    loop_var: local_subnets_item
+  when: not _local_address_group_present
+
 - name: Validate presence of remote subnets
   ansible.builtin.assert:
     that:
@@ -46,6 +56,15 @@
       - remote_subnets is not string and remote_subnets is not mapping and remote_subnets is iterable
       - remote_subnets | length > 0
     fail_msg: "remote_subnets must be a non-empty list"
+
+- name: Validate elements of remote subnets
+  ansible.builtin.assert:
+    that:
+      - remote_subnets_item is ansible.utils.ipv4
+      - "'/' in remote_subnets_item"
+  loop: "{{ remote_subnets }}"
+  loop_control:
+    loop_var: remote_subnets_item
 
 - name: Validate presence of source interface list
   ansible.builtin.assert:
@@ -81,7 +100,8 @@
   ansible.builtin.assert:
     that:
       - phase1_remote_gateway | default('', true) | trim != ''
-    fail_msg: "phase1_remote_gateway input parameter must be present and non-empty"
+      - phase1_remote_gateway is ansible.utils.ipv4_address
+    fail_msg: "phase1_remote_gateway input parameter must be present, non-empty and a valid ipv4 address"
 
 - name: Validate presence of phase1 psksecret input
   ansible.builtin.assert:
