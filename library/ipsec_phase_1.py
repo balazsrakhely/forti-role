@@ -39,7 +39,7 @@ def main():
     proposal = data["proposal"]
     allowed_proposal = ['aes128-sha256','aes128-sha512','aes256-sha256','aes256-sha512']
     proposal = [p.lower() for p in proposal]
-    proposal = set(proposal)
+    proposal = list(set(proposal))
     if len(proposal) == 0:
         module.fail_json(msg=f"At least one value is required for proposal. Allowed values are: {allowed_proposal}")
     invalid_proposal = [p for p in proposal if p not in allowed_proposal]
