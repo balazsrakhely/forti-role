@@ -22,7 +22,6 @@ Each object that is created by the script will be identifiable by a name prefix 
 **5. IPsec Phase 1**
 
 **6. IPsec Phase 2**
-    - The script uses the same values as phase 1 for identical fields (proposal, auto-negotiate, dhgrp).
 
 **7. Static Routes**
     - Create a static route for each 'remote_subnets' list item as destination and the IPsec phase 1 name as device.
