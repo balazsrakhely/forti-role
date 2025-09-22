@@ -8,9 +8,9 @@
       interface: "{{ phase1_local_interface }}"
       remote-gw: "{{ phase1_remote_gateway }}"
       psksecret: "{{ phase1_psksecret }}"
-      proposal: "{{ phase1_proposal | default(['aes256-sha256'], true) | list }}"
+      proposal: "{{ phase1_proposal | default(['aes256-sha256']) | list }}"
       auto-negotiate: "{{ phase1_auto_negotiate | default('enable', true) }}"
-      dhgrp: "{{ phase1_dhgrp | default(['16'], true) | list }}"
+      dhgrp: "{{ phase1_dhgrp | default(['16']) | list }}"
       ike-version: "{{ phase1_ike_version | default('2', true) }}"
       comments: "{{ _comment }}"
   register: _ipsec_phase_1_result
