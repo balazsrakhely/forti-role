@@ -1,4 +1,34 @@
 ---
+- debug:
+    msg:
+      device: "{{ forti_device }}"
+      vdom: "{{ vdom }}"
+      vpn_ipsec_phase1:
+        name: "{{ tunnel_name }}"
+        interface: "{{ phase1_local_interface }}"
+        remote-gw: "{{ phase1_remote_gateway }}"
+        psksecret: "{{ phase1_psksecret }}"
+        proposal: "{{ (phase1_proposal | default(['aes256-sha256'], true)) | join(',') }}"
+        auto-negotiate: "{{ phase1_auto_negotiate | default('enable', true) }}"
+        dhgrp: "{{ (phase1_dhgrp | default(['16'], true)) | join(',') }}"
+        ike-version: "{{ phase1_ike_version | default('2', true) }}"
+        comments: "{{ _comment }}"
+
+- debug:
+    msg:
+      device: "{{ forti_device | type_debug }}"
+      vdom: "{{ vdom | type_debug }}"
+      vpn_ipsec_phase1:
+        name: "{{ tunnel_name | type_debug }}"
+        interface: "{{ phase1_local_interface | type_debug }}"
+        remote-gw: "{{ phase1_remote_gateway | type_debug }}"
+        psksecret: "{{ phase1_psksecret | type_debug }}"
+        proposal: "{{ (phase1_proposal | default(['aes256-sha256'], true)) | join(',') | type_debug }}"
+        auto-negotiate: "{{ phase1_auto_negotiate | default('enable', true) | type_debug }}"
+        dhgrp: "{{ (phase1_dhgrp | default(['16'], true)) | join(',') | type_debug }}"
+        ike-version: "{{ phase1_ike_version | default('2', true) | type_debug }}"
+        comments: "{{ _comment | type_debug }}"
+
 - name: IPsec Phase 1
   ipsec_phase_1:
     device: "{{ forti_device }}"
